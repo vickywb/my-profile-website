@@ -1,0 +1,715 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.bg-light {
+    --bs-bg-opacity: 1;
+    background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity)) !important;
+}
+
+.bg-white {
+    --bs-bg-opacity: 1;
+    background-color: rgb(255, 254, 254) !important;
+}
+        
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #f9f9f9;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navigation */
+.navbar {
+    background: #fff;
+    padding: 1rem 0;
+    background: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.731);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #007bff;
+}
+
+.nav-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+/* Gaya dasar untuk navbar */
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex; /* Mengatur item-item dalam satu baris */
+    justify-content: center;
+}
+
+.nav-links > li {
+    position: relative;
+    margin: 0 5px;
+}
+
+.nav-links a {
+    color: rgba(0, 0, 0, 0.731);
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+
+/* Menyembunyikan dropdown menu secara default */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 160px;
+    box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    list-style: none;
+    padding: 0;
+    margin-top: 5px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Untuk kompatibilitas browser Safari */
+}
+
+/* Tampilkan dropdown menu saat kursor berada di atas elemen .dropdown */
+.dropdown:hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #007bff;
+    transform: translateX(2px); /* Subtle slide effect */
+}
+
+.dropdown-menu li a.active {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+    font-weight: 600;
+}
+
+/* Gaya untuk item dalam dropdown */
+.dropdown-menu li a {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+/* Mobile Toggle Button */
+.mobile-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.3s ease;
+}
+
+.mobile-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 3px 0;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.mobile-toggle.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.mobile-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-toggle.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
+/* Mobile Navigation */
+.nav-links.mobile {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.nav-links.mobile.active {
+    display: flex;
+}
+
+.nav-links.mobile li {
+    text-align: left;
+    padding: 0.5rem 0;
+}
+
+.nav-links.mobile a {
+    padding: 0.75rem 1rem;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.nav-links.mobile a:hover {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+}
+
+.language-switcher {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.flag {
+    width: 13px;
+    border-radius: 2px;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 14px;
+    text-align: center;
+}
+
+
+/* Sections */
+.section {
+    padding: 80px 0;
+    border-bottom: 2px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #25394f, #c4d5e8);
+    color: white;
+    text-align: center;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    margin-top: 80px;
+}
+
+.hero-content {
+    width: 100%;
+}
+
+.profile-image {
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #fff;
+    margin: 0 auto 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #666;
+    border: 4px solid rgba(255,255,255,0.3);
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.hero h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    opacity: 0.9;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 8px 20px;
+    border: 2px solid white;
+    background: transparent;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: white;
+    color: #007bff;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* About Section */
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about-image {
+    width: 100%;
+    height: 300px;
+    background: #ddd;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 1.2rem;
+    border: 5px solid rgba(255, 250, 250, 0.957);
+}
+
+.about-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    object-fit: cover; 
+}
+
+.about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* Skills Section */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.skill-category {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.skill-category:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+.skill-name {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.skill-item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.skill-tag {
+    background-color: rgba(13, 110, 253, 0.1) !important; /* background lebih soft */
+    color: rgba(13, 110, 253, 0.9) !important; /* text lebih dark */
+    font-size: 0.75em; /* 14px */
+    font-weight: 700;
+    padding: 0.3rem 0.7rem; /* 6px 12px */
+    border-radius: 6px;/* sedikit lebih compact */
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Certificate */
+.certificate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.certificate-item {
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Experience & Education */
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #007bff;
+    transform: translateX(-50%);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 3rem;
+    padding: 0 3rem;
+}
+
+.timeline-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.timeline-date {
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+/* Projects Section */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.project-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.project-image {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-image img {
+    transform: scale(1.05);
+}
+
+.project-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(0,123,255,0.1), rgba(108,99,255,0.1));
+    z-index: 1;
+}
+
+.project-content {
+    padding: 1.5rem;
+}
+
+.project-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #2d3748;
+}
+
+.project-description {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    font-size: 0.95rem;
+}
+
+.project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0 1.5rem 0;
+}
+
+.tech-tag {
+    background: rgba(59, 130, 246, 0.1);
+    color: #1e40af;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.project-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.project-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.project-link:hover {
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.project-link.demo {
+    background: #3b82f6;
+    color: white;
+}
+
+.project-link.demo:hover {
+    background: #1d4ed8;
+}
+
+.project-link.source {
+    background: transparent;
+}
+
+/* Special styling for code images */
+.code-bg {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    position: relative;
+}
+
+.code-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="10" y="20" fill="%2364748b" font-size="8" font-family="monospace">&lt;div class="container"&gt;</text><text x="15" y="35" fill="%2306b6d4" font-size="8" font-family="monospace">const projects = []</text><text x="15" y="50" fill="%23f59e0b" font-size="8" font-family="monospace">function render() {</text><text x="20" y="65" fill="%23ef4444" font-size="8" font-family="monospace">return &lt;Portfolio /&gt;</text><text x="15" y="80" fill="%23f59e0b" font-size="8" font-family="monospace">}</text></svg>') no-repeat center;
+    background-size: 80%;
+    opacity: 0.6;
+}
+/* Footer */
+.footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.social-link {
+    width: 50px;
+    height: 50px;
+    background: #555;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.social-link:hover {
+    background: #007bff;
+}
+
+.job-description ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.job-description li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.job-description p {
+    margin-bottom: 10px;
+}
+/* styles.css */
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .nav-links {
+        gap: 0.5rem;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 1.5rem;
+    }
+    
+    .btn {
+        padding: 8px 20px;
+    }
+
+    .cta-buttons {
+        display: grid;
+        gap: 1rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .timeline::before {
+        left: 20px;
+    }
+    
+    .timeline-item {
+        padding-left: 50px;
+        text-align: left;
+    }
+
+    .language-switcher {
+        margin-left: auto;
+        margin-right: 10px;
+    }
+    
+    /* Hide desktop navigation and show mobile toggle */
+    .nav-links:not(.mobile) {
+        display: none;
+    }
+    
+    .mobile-toggle {
+        display: flex;
+    }
+
+    .nav-content .nav-links {
+    /* Gaya untuk mobile, misal: */
+    display: none; /* Sembunyikan secara default */
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fffdfddb; /* Contoh */
+    }
+
+    .nav-content .nav-links.active {
+        display: flex; /* Tampilkan saat class 'active' ditambahkan */
+    }
+
+    .dropdown-menu {
+        margin-top: 0px;
+        background-color: #fffdfddb; /* Contoh */
+    }
+
+    /* Dropdown di mobile (menggunakan class 'show') */
+    .dropdown-menu.show {
+        display: block; /* Tampilkan saat class 'show' ditambahkan oleh JS */
+    }
+
+    /* Pastikan dropdown di mobile tidak menggunakan hover */
+    .dropdown:hover > .dropdown-menu {
+        display: none;
+    }
+}
