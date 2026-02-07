@@ -207,32 +207,32 @@ class UserProfileService
      * @return void
      */
     private function deleteOldFile($fileId)
-    {
+    {   
         try {
-            // Check fileId
-            if (!empty($fileId)) {
-                $oldFile = $this->fileRepository->findById($fileId);
-            }
-            
-            if ($oldFile->id) {
-                // Store path on variable
-                $oldFilePath = $oldFile->directory;
+            if (empty($fileId)) {
+                return; // Jika tidak ada fileId, langsung return
             }
 
-            if (isset($oldFilePath)) {
-                // Delete from storage
-                Storage::delete($oldFilePath);
+            $oldFile = $this->fileRepository->findById($fileId);
+            
+            if (!$oldFile) {
+                Log::warning("File with ID {$fileId} not found in database");
+                return;
+            }
+
+            // Delete from storage
+            if ($oldFile->directory && Storage::disk('public')->exists($oldFile->directory)) {
+                Storage::disk('public')->delete($oldFile->directory);
             }
 
             // Delete from database
             $this->fileRepository->delete($fileId);
 
-            Log::info('Old file successfully deleted.');
+            Log::info("Old file (ID: {$fileId}) successfully deleted.");
 
         } catch (\Throwable $th) {
-
-            Log::error('Old file failed to delete:' . $th->getMessage());
-            throw new Exception('Old file failed to delete:' . $th->getMessage());
+            Log::error('Old file failed to delete: ' . $th->getMessage());
+            throw new Exception('Old file failed to delete: ' . $th->getMessage());
         }
     }
 }
