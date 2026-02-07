@@ -25,7 +25,8 @@ class CertificateUpdateRequest extends FormRequest
             'cert_name' => 'required|string',
             'issuing_organization' =>  'required|string',
             'issue_date' => 'required|string',
-            'expired_date' => 'nullable|string'
+            'expired_date' => 'nullable|string',
+            'image' => 'nullable|mimes:jpg,png,webp|max:2048'
         ];
     }
 }

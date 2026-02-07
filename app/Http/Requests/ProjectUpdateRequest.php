@@ -26,7 +26,7 @@ class ProjectUpdateRequest extends FormRequest
             'description' => 'string',
             'github_url' => 'nullable|string',
             'project_url' => 'nullable|string',
-            'image' => 'nullable|mimes:jpg,png|max:2048'
+            'image' => 'nullable|mimes:jpg,png,webp|max:2048'
         ];
     }
 }
