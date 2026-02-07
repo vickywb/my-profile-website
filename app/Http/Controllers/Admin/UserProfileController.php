@@ -65,7 +65,7 @@ class UserProfileController extends Controller
     public function uploadImage(Request $request, UserProfile $userProfile)
     {
         $request->validate([
-            'image' => 'required|file|image|mimes:jpeg,png|max:2048'
+            'image' => 'required|file|image|mimes:jpeg,png,webp|max:2048'
         ]);
 
         $updatedProfile = $this->userProfileService->uploadImageOnly($request, $userProfile);
