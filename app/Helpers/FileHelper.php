@@ -2,28 +2,29 @@
 
 namespace App\Helpers;
 
-use App\Models\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
 
 class FileHelper
 {
     public static function uploadFileToStorage(UploadedFile $file, string $directory): array
     {
-        // Create new name using uniqid + extension
-        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+        // Ganti ekstensi menjadi .webp secara paksa
+        $filename = Str::random(20) . '.webp';
+        $path = $directory . '/' . $filename;
 
-        // Store to storage
-        $path = $file->storeAs($directory, $filename, 'public');
+        // Proses konversi ke webp
+        $encodedImage = Image::read($file)->toWebp(80);
 
-        $storagePath = $directory . '/' . $filename;
+        // Simpan hasil konversi ke Storage public
+        Storage::disk('public')->put($path, (string) $encodedImage);
 
-        $url = asset('storage/' . $path);
-        
-        // Return URL and Directory
+        // Return data
         return [
-            'directory' => $storagePath,
-            'file_url' => $url
+            'directory' => $path,
+            'file_url'  => asset('storage/' . $path)
         ];
     }
 }
