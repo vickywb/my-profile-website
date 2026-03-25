@@ -42,7 +42,8 @@ class FileHelpers
 
         return [
             'directory' => $path,
-            'file_url'  => asset('storage/' . $path)
+            'file_url'  => asset('storage/' . $path),
+            'name' => $file->getClientOriginalName()
         ];
     }
     
