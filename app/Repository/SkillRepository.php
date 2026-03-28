@@ -6,15 +6,16 @@ use App\Models\Skill;
 
 class SkillRepository
 {
-    private $skill;
-
-    public function __construct(Skill $skill) {
-        $this->skill = $skill;
-    }
+    public function __construct(private Skill $skill) {}
 
     public function save(Skill $skill)
     {
         $skill->save();
-        return $skill;
+        return $skill->fresh();
+    }
+
+    public function findByColumn($value, $column)
+    {
+        return $this->skill->where($column, $value)->first();
     }
 }

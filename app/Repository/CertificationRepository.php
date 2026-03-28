@@ -6,11 +6,7 @@ use App\Models\Certification;
 
 class CertificationRepository
 {
-    private $certification;
-
-    public function __construct(Certification $certification) {
-        $this->certification = $certification;
-    }
+    public function __construct(private Certification $certification) {}
 
     public function findByColumn($value, $column)
     {
@@ -20,6 +16,6 @@ class CertificationRepository
     public function save(Certification $certification)
     {
         $certification->save();
-        return $certification;
+        return $certification->fresh();
     }
 }

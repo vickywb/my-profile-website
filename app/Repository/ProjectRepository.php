@@ -6,16 +6,17 @@ use App\Models\Project;
 
 class ProjectRepository
 {
-    private $project;
+    public function __construct(private Project $project) {}
 
-    public function __construct(Project $project) {
-        $this->project = $project;
-    }
-
-    public function save(Project $project)
+    public function save(Project $project): Project
     {
         $project->save();   
 
-        return $project;
+        return $project->fresh();
+    }
+
+    public function findById(int $id): ?Project
+    {
+      return $this->project->find($id);
     }
 }
