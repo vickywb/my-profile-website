@@ -7,7 +7,6 @@ use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use App\Service\UserProfileService;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserProfileStoreRequest;
 use App\Http\Requests\UserProfileUpdateRequest;
 use App\Models\UserProfileTranslation;
 
@@ -44,18 +43,17 @@ class UserProfileController extends Controller
 
     public function update(UserProfileUpdateRequest $request, UserProfile $userProfile)
     {
-        $data = $request->only([
-            'phone_number', 'address'
-        ]);
+        $data = $request->validate();
+        $image = $request->file('image');
 
-        $userProfile = $this->userProfileService->handleUpdateProfile($data, $request, $userProfile);
+        $userProfile = $this->userProfileService->handleUpdateProfile($data, $image, $userProfile);
 
         return to_route('admin.user-profile.index')->with([
             'success' => 'User Profile successfully updated.'
         ]);
     }
 
-    public function imageForm(Request $request, UserProfile $userProfile)
+    public function imageForm(UserProfile $userProfile)
     {
         return view('backend.user-profiles.upload-image', [
             'userProfile' => $userProfile
@@ -68,7 +66,9 @@ class UserProfileController extends Controller
             'image' => 'required|file|image|mimes:jpeg,png,webp|max:2048'
         ]);
 
-        $updatedProfile = $this->userProfileService->uploadImageOnly($request, $userProfile);
+        $image = $request->file('image');
+
+        $userProfile = $this->userProfileService->uploadImageOnly($image, $userProfile);
 
         return to_route('admin.user-profile.index')->with([
             'success' => 'Image successfully updated.'
@@ -107,11 +107,9 @@ class UserProfileController extends Controller
             'lang' => 'required|string'
         ]);
 
-        $data = $request->only([
-            'bio', 'full_bio', 'lang'
-        ]);
+        $data = $request->validated();
 
-        $translation = $this->userProfileService->handleCreateOrUpdateBio($data, $request, $userProfile);
+        $translation = $this->userProfileService->handleCreateOrUpdateBio($data, $userProfile);
 
         return to_route('admin.user-profile.index')->with([
             'success' => 'New Bio successfully created.'
