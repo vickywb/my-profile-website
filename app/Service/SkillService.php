@@ -16,7 +16,7 @@ class SkillService
         $this->skillRepository = $skillRepository;
     }
 
-    public function handleSkill(array $data, $request, $categorySkill)
+    public function handleSkill(array $data, $categorySkill)
     {
         try {
             DB::beginTransaction();
