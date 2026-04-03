@@ -4,19 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Lang;
 use App\Models\UserCvFile;
-use Illuminate\Http\Request;
-use App\Service\UploadCvService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CvStoreRequest;
+use App\Service\CvsService;
 
 class UploadCvController extends Controller
 {
-    private $uploadCvService;
+    public function __construct(private CvsService $cvsService) {}
 
-    public function __construct(UploadCvService $uploadCvService) {
-        $this->uploadCvService = $uploadCvService;
-    }
-
-    public function cvForm(Request $request, UserCvFile $userCvFile)
+    public function cvForm(UserCvFile $userCvFile)
     {
         $languages = Lang::cases();
 
@@ -26,24 +22,22 @@ class UploadCvController extends Controller
         ]);
     }
 
-    public function uploadedCV(Request $request, UserCvFile $userCvFile)
+    public function uploadedCV(CvStoreRequest $request, UserCvFile $userCvFile)
     {
-        $request->validate([
-            'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            'lang' => 'required'
-        ]);
+        $cv = $request->file('cv');
 
-        $data = $request->only(['cv', 'cv_id', 'lang']);
+        $data = $request->validated();
 
-        $updateCv = $this->uploadCvService->uploadCVOnly($data, $request, $userCvFile);
+        $storeCv = $this->cvsService->uploadCVOnly($data, $cv);
+
         return to_route('admin.user-profile.index')->with([
             'success' => 'CV successfully updated.'
         ]);
     }
-
-    public function deleteCv(Request $request, UserCvFile $userCvFile)
+    
+    public function deleteCv(UserCvFile $userCvFile)
     {
-        $deleteCv = $this->uploadCvService->handleDeleteCv($request, $userCvFile);
+        $this->cvsService->handleDeleteCv($userCvFile);
 
         return to_route('admin.user-profile.index')->with([
             'success' => 'CV successfully deleted.'
