@@ -22,13 +22,12 @@ class UploadCvController extends Controller
         ]);
     }
 
-    public function uploadedCV(CvStoreRequest $request, UserCvFile $userCvFile)
+    public function uploadedCV(CvStoreRequest $request)
     {
+        $data = $request->validated();
         $cv = $request->file('cv');
 
-        $data = $request->validated();
-
-        $storeCv = $this->cvsService->uploadCVOnly($data, $cv);
+        $this->cvsService->uploadCVOnly($data, $cv);
 
         return to_route('admin.user-profile.index')->with([
             'success' => 'CV successfully updated.'
