@@ -33,11 +33,11 @@ class CertificationController extends Controller
 
     public function store(CertificateStoreRequest $request, Certification $certification)
     {
-        $data = $request->only([
-            'cert_name', 'issuing_organization', 'issue_date', 'expired_date', 'image'
-        ]);
+        $data = $request->validated();
 
-        $certification = $this->certificateService->handleCertificate($data, $request);
+        $image = $request->hasFile('image') ? $request->file('image') : null;
+
+        $certification = $this->certificateService->handleCreateCertificate($data, $image);
 
         return to_route('admin.certificate.index')->with([
             'success' => 'New Certification successfully created.'
@@ -53,11 +53,11 @@ class CertificationController extends Controller
 
     public function update(CertificateUpdateRequest $request, Certification $certificate)
     {
-        $data = $request->only([
-            'cert_name', 'issuing_organization', 'issue_date', 'expired_date', 'image'
-        ]);
+        $data = $request->validated();
 
-        $certification = $this->certificateService->handleUpdateCertificate($data, $request, $certificate);
+        $image = $request->hasFile('image') ? $request->file('image') : null;
+
+        $certification = $this->certificateService->handleUpdateCertificate($data, $image, $certificate);
 
         return to_route('admin.certificate.index')->with([
             'success' => 'Certificate successfully updated.'
