@@ -7,7 +7,6 @@ use App\Http\Requests\CertificateStoreRequest;
 use App\Http\Requests\CertificateUpdateRequest;
 use App\Models\Certification;
 use App\Service\CertificateService;
-use Illuminate\Http\Request;
 
 class CertificationController extends Controller
 {
@@ -31,13 +30,13 @@ class CertificationController extends Controller
         return view('backend.certifications.create');
     }
 
-    public function store(CertificateStoreRequest $request, Certification $certification)
+    public function store(CertificateStoreRequest $request)
     {
         $data = $request->validated();
 
         $image = $request->hasFile('image') ? $request->file('image') : null;
 
-        $certification = $this->certificateService->handleCreateCertificate($data, $image);
+        $this->certificateService->handleCreateCertificate($data, $image);
 
         return to_route('admin.certificate.index')->with([
             'success' => 'New Certification successfully created.'
@@ -57,7 +56,7 @@ class CertificationController extends Controller
 
         $image = $request->hasFile('image') ? $request->file('image') : null;
 
-        $certification = $this->certificateService->handleUpdateCertificate($data, $image, $certificate);
+        $this->certificateService->handleUpdateCertificate($data, $image, $certificate);
 
         return to_route('admin.certificate.index')->with([
             'success' => 'Certificate successfully updated.'
