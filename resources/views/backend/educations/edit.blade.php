@@ -4,12 +4,12 @@
 @section('content')
 
     <div class="container-xxl flex-grow-1 container-p-y">
-      <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms /</span> Create Education</h4>
+      <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms /</span> Edit Education</h4>
 
       {{-- include components message --}}
       @include('components._messages')
 
-      <form action="{{ route('admin.experience.update', $education) }}" method="post" enctype="multipart/form-data">
+      <form action="{{ route('admin.education.update', $education) }}" method="post" enctype="multipart/form-data">
         @csrf
         @method('PATCH')
 
@@ -37,7 +37,7 @@
                   class="form-control"
                   id="exampleFormControlInput1"
                   name="degree"
-                  placeholder="Institution Name"
+                  placeholder="Degree"
                   value="{{ old('degree', $education->degree) }}"
                 />
               </div>
@@ -48,7 +48,7 @@
                   type="text"
                   class="form-control"
                   id="exampleFormControlInput1"
-                  name="position"
+                  name="field_of_study"
                   placeholder="Field of Study"
                   value="{{ old('field_of_study', $education->field_of_study) }}"
                 />
