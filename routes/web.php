@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EducationController;
 use App\Http\Controllers\Admin\ExperienceController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\SkillController;
@@ -19,7 +20,7 @@ Route::get('/download-cv', [HomeController::class, 'downloadCV'])->name('downloa
 Route::prefix('auth')
     ->controller(AuthController::class)
     ->group(function () {
-        Route::get('login', 'login')->name('login');
+        Route::get('login', 'login')->name('login')->middleware('throttle: 5,1');
         Route::post('login', 'loginProcess')->name('login.process');
         Route::post('logout', 'logout')->name('logout')->middleware('is_admin');
     }
@@ -42,16 +43,16 @@ Route::prefix('admin')
                 Route::get('/{userProfile}/detail', 'show')->name('show');
                 Route::get('/{userProfile}/edit', 'edit')->name('edit');
                 Route::patch('/{userProfile}/update', 'update')->name('update');
-                Route::delete('/{userProfile}/delete', 'destroy')->name('destroy');
 
                 // Upload Image
                 Route::get('/upload-image/{userProfile}', 'imageForm')->name('image-form');
                 Route::patch('/upload-image/{userProfile}', 'uploadImage')->name('upload-image');
 
                 // Bio and Full Bio
-                Route::get('/create-bio', 'createBio')->name('bio-form');
-                Route::get('/{userProfile}/edit-bio/{translation}', 'editBio')->name('edit-bio-form');
+                Route::get('/{userProfile}/create-bio', 'createBio')->name('bio-form');
                 Route::post('/{userProfile}/store-bio', 'storeBio')->name('store-bio');
+                Route::get('/{userProfile}/edit-bio/{translation}', 'editBio')->name('edit-bio-form');
+                Route::patch('/{userProfile}/update-bio/{translation}', 'updateBio')->name('update-bio');
                 Route::delete('/{translation}/delete', 'deleteBio')->name('delete-bio');
             }
         );
@@ -115,6 +116,20 @@ Route::prefix('admin')
                 Route::get('/{project}/edit', 'edit')->name('edit');
                 Route::patch('/{project}/update', 'update')->name('update');
                 Route::delete('/{project}/delete', 'destroy')->name('destroy');
+            }
+        );
+
+        //Education
+        Route::prefix('educations')
+            ->name('education.')
+            ->controller(EducationController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/store', 'store')->name('store');
+                Route::get('/{education}/edit', 'edit')->name('edit');
+                Route::patch('/{education}/update', 'update')->name('update');
+                Route::delete('/{education}/delete', 'destroy')->name('destroy');
             }
         );
         
