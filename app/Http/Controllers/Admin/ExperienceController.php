@@ -33,14 +33,11 @@ class ExperienceController extends Controller
         return view('backend.experiences.create');
     }
 
-    public function store(ExperienceStoreRequest $request, Experience $experience)
+    public function store(ExperienceStoreRequest $request)
     {
-        $data = $request->only([
-            'company_name', 'location', 'position', 'start_date', 'end_date',
-            'job_description'
-        ]);
+        $data = $request->validated();
 
-        $experience = $this->experienceService->handleExperience($data, $request);
+        $this->experienceService->handleExperience($data, $request);
 
         return to_route('admin.experience.index')->with([
             'success' => 'New Experience successfully created.'
@@ -63,12 +60,9 @@ class ExperienceController extends Controller
 
     public function update(ExperienceUpdateRequest $request, Experience $experience)
     {
-        $data = $request->only([
-            'company_name', 'location', 'position', 'start_date', 'end_date', 
-            'job_description'
-        ]);
+        $data = $request->validated();
 
-        $experience = $this->experienceService->handleUpdateExperience($data, $request, $experience);
+        $this->experienceService->handleUpdateExperience($data, $experience);
 
         return to_route('admin.experience.index')->with([
             'success' => 'Experience successfully updated.'
@@ -94,7 +88,7 @@ class ExperienceController extends Controller
         ]);
     }
 
-    public function editTranslation(Request $request, Experience $experience, ExperienceTranslation $translation)
+    public function editTranslation(Experience $experience, ExperienceTranslation $translation)
     {
         $translation = ExperienceTranslation::where('experience_id', $experience->id)
                                         ->where('lang', $translation->lang)
@@ -119,9 +113,9 @@ class ExperienceController extends Controller
             'lang', 'job_description'
         ]);
 
-        $experience = $this->experienceService->handleUpdateOrCreateJobDescription($data, $request, $experience);
+        $this->experienceService->handleUpdateOrCreateJobDescription($data, $experience);
 
-        return to_route('admin.experience.show', $experience->id)->with([
+        return to_route('admin.experience.show', $experience)->with([
             'success' => 'Job Description Experience successfully updated.'
         ]);
     }
