@@ -8,7 +8,7 @@ class UserProfileRepository
 {
     public function __construct(private UserProfile $userProfile) {}
 
-    public function save(UserProfile $userProfile)
+    public function save(UserProfile $userProfile): UserProfile
     {
         $userProfile->save();
         return $userProfile->fresh();
