@@ -3,236 +3,175 @@
 namespace App\Service;
 
 use Exception;
-use App\Helpers\FileHelper;
 use App\Models\UserProfile;
 use App\Models\UserProfileTranslation;
-use App\Repository\FileRepository;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use App\Repository\UserProfileRepository;
 
-/**
- * Handle business logic for User Profile operations
- * Including profile data, image, and CV management
- */
 class UserProfileService
 {
-    private $userProfileRepository;
-    private $fileRepository;
-    
-    /**
-     * UserProfileService constructor
-     * 
-     * @param UserProfileRepository $userProfileRepository
-     * @param FileRepository $fileRepository
-     */
     public function __construct(
-        UserProfileRepository $userProfileRepository,
-        FileRepository $fileRepository
-    ) {
-        $this->userProfileRepository = $userProfileRepository;
-        $this->fileRepository = $fileRepository;
-    }
+        private UserProfileRepository $userProfileRepository,
+        private FileService $fileService
+    ) {}
 
-    /**
-     * Update user profile data
-     * 
-     * @param array $data Request data
-     * @param mixed $request Request instance
-     * @return UserProfile
-     * @throws \Exception When profile creation/update fails
-     */
-    public function handleUpdateProfile(array $data, $request, $userProfile)
+    public function handleUpdateProfile(array $data, ?UploadedFile $image, UserProfile $userProfile): UserProfile
     {
+        $oldFileId = $userProfile->file_id;
+
         try {
-            DB::beginTransaction();
+            $newFile = DB::transaction(function () use ($data, $image, $userProfile) {
+                $newFile   = null;
+                $newFileId = $userProfile->file_id;
 
-            $oldImageId = $userProfile->file_id;
-            $newFileId = 
-                $request->hasFile('image') 
-                ? $this->handleFileUpload($request->file('image'), 'file/profile')
-                : $oldImageId;
-            
-            $profileData = [
-                'phone_number' => $data['phone_number'] ?? null,
-                'address' => $data['address'] ?? null,
-                'file_id' => $newFileId
-            ];
-            
-            // Simpan user profile menggunakan Repository
-            $userProfile = $userProfile->fill($profileData);
-            $userProfile = $this->userProfileRepository->save($userProfile);
+                if ($image) {
+                    $newFile   = $this->fileService->handleUploadAndSave($image, 'file/profile');
+                    $newFileId = $newFile->id;
+                }
 
-            DB::commit();
+                $userProfile->fill([
+                    'phone_number' => $data['phone_number'] ?? null,
+                    'address'      => $data['address'] ?? null,
+                    'file_id'      => $newFileId,
+                ]);
 
-            Log::info('User Profile has been updated.');
+                $this->userProfileRepository->save($userProfile);
 
-            // Cleanup old image if replaced
-            if ($request->hasFile('image') && $oldImageId && $oldImageId != $newFileId) {
-                $this->deleteOldFile($oldImageId);
+                return $newFile;
+            });
+
+            if ($image && $newFile && $oldFileId && $oldFileId !== $newFile->id) {
+                $this->fileService->deleteFile($oldFileId);
             }
 
-            return $userProfile;
-            
+            Log::info('User profile updated.', [
+                'user_profile_id' => $userProfile->id,
+                'old_file_id'     => $oldFileId,
+                'new_file_id'     => $newFile?->id,
+            ]);
+
+            return $userProfile->fresh();
+
         } catch (\Throwable $th) {
-            DB::rollBack();
-            
-            Log::error('Failed to update profile: ' . $th->getMessage());
-            Log::error('User Profile ID: ' . $userProfile->id);
+            Log::error('Failed to update profile: ' . $th->getMessage(), [
+                'user_profile_id' => $userProfile->id,
+            ]);
 
             throw new Exception('Failed to update profile: ' . $th->getMessage());
         }
     }
-    
-    /**
-     * Update profile image only
-     * Handles old image deletion if exists
-     * 
-     * @param mixed $request Request instance with image file
-     * @param UserProfile $userProfile Profile to update
-     * @return UserProfile
-     * @throws \Exception When no image provided or upload fails
-     */
-    public function uploadImageOnly($request, $userProfile)
+
+    public function uploadImageOnly(UploadedFile $image, UserProfile $userProfile): UserProfile
     {
+        $oldFileId = $userProfile->file_id;
+
         try {
-            DB::beginTransaction();
+            $newFile = DB::transaction(function () use ($image, $userProfile) {
+                $newFile = $this->fileService->handleUploadAndSave($image, 'file/profile');
+                $userProfile->update(['file_id' => $newFile->id]);
+                return $newFile;
+            });
             
-            // Store file data and directory by handleFileUpload
-            $oldFileId = $userProfile->file_id;
-            $newFileId = $request->hasFile('image')
-                ? $this->handleFileUpload($request->file('image'), 'file/profile')
-                : $oldFileId;
-
-            // Update user profile file_id with new File id
-            $userProfile->update(['file_id' => $newFileId]);
-            
-            DB::commit();
-
-            // Cleanup old image if replaced
-            if ($request->hasFile('image') && $oldFileId && $oldFileId != $newFileId) {
-                $this->deleteOldFile($oldFileId);
+            if ($oldFileId && $oldFileId !== $newFile->id) {
+                $this->fileService->deleteFile($oldFileId);
             }
 
+            Log::info('Profile image updated.', [
+                'user_profile_id' => $userProfile->id,
+                'old_file_id'     => $oldFileId,
+                'new_file_id'     => $newFile->id,
+            ]);
+
             return $userProfile->fresh();
-            
+
         } catch (\Throwable $th) {
-            DB::rollBack();
-            
-            Log::error('Failed to upload image: ' . $th->getMessage());
-            Log::error('User Profile ID: ' . $userProfile->id);
+            Log::error('Failed to upload image: ' . $th->getMessage(), [
+                'user_profile_id' => $userProfile->id,
+            ]);
 
             throw new Exception('Failed to upload image: ' . $th->getMessage());
         }
     }
 
-    /**
-     * Update or Create Biography and Full Biography with Lang
-     * Handles create bio and full bio, update if lang exists
-     * 
-     * @param mixed $request Request instance with image file
-     * @param UserProfile $userProfile Profile to update
-     * @return UserProfile
-     * @throws \Exception When no image provided or upload fails
-     */
-    public function handleCreateOrUpdateBio(array $data, $request, $userProfile)
+    public function handleCreateBio(array $data, UserProfile $userProfile): UserProfileTranslation
     {
         try {
-            DB::beginTransaction();
-
-            // updateOrCreate - if lang exists = update, if not exists = create
-            $storeTranslation =  UserProfileTranslation::updateOrCreate(
-                [
+          $translation = DB::transaction(function () use ($data, $userProfile) {
+                return UserProfileTranslation::create([
                     'user_profile_id' => $userProfile->id,
-                    'lang' => $data['lang']
-                ],
-                [
-                    'bio' => $data['bio'],
-                    'full_bio' => $data['full_bio']
-                ]
-            );
-
-            DB::commit();
-
-            Log::info('Bio Translation successfully update.');
+                    ...$data
+                ]);
+            });
             
-            return $storeTranslation;
+            Log::info('Bio translation created.', [
+                'user_profile_id' => $translation->user_profile_id,
+                'lang'            => $translation->lang,
+            ]);
+
+            return $translation;
 
         } catch (\Throwable $th) {
-            DB::rollBack();
+            Log::error('Failed to create bio: ' . $th->getMessage(), [
+                'user_profile_id' => $data['user_profile_id'] ?? null,
+            ]);
 
-            Log::error('Faild to update data:' . $th->getMessage());
-            throw new Exception('Failed to update data:' . $th->getMessage());
+            throw new Exception('Failed to create bio: ' . $th->getMessage());
         }
     }
-        
-    /**
-     * Handle file upload and store file data
-     * 
-     * @param \Illuminate\Http\UploadedFile $file
-     * @param string $directory Target directory
-     * @return int File ID
-     */
-    private function handleFileUpload($file, $directory)
-    {   
-        try {
-            // Upload new File using File Helper
-            $fileResult = FileHelper::uploadFileToStorage($file, $directory);
-            
-            // Store to database
-            $fileData = [
-                'name' => $file->getClientOriginalName(),
-                'directory' => $fileResult['directory'],
-                'file_url' => $fileResult['file_url'],
-            ];
-        
-            $fileRecord = $this->fileRepository->save($fileData);
-        
 
-            return $fileRecord->id;
+    public function handleCreateOrUpdateBio(array $data, UserProfile $userProfile, ?int $translationId = null): UserProfileTranslation
+    {
+        try {
+            $translation = DB::transaction(function () use ($data, $userProfile, $translationId) {
+                return UserProfileTranslation::updateOrCreate(
+                    [
+                        'id' => $translationId,
+                        'user_profile_id' => $userProfile->id,
+                        'lang'            => $data['lang'],
+                    ],
+                    [
+                        'bio'      => $data['bio'],
+                        'full_bio' => $data['full_bio'],
+                    ]
+                );
+            });
+
+            Log::info('Bio translation updated.', [
+                'user_profile_id' => $userProfile->id,
+                'lang'            => $data['lang'],
+            ]);
+
+            return $translation;
 
         } catch (\Throwable $th) {
+            Log::error('Failed to update bio: ' . $th->getMessage(), [
+                'user_profile_id' => $userProfile->id,
+            ]);
 
-            Log::error('Failed to upload file:' . $th->getMessage());
-            throw new Exception('Failedd to upload file:' . $th->getMessage());
+            throw new Exception('Failed to update bio: ' . $th->getMessage());
         }
     }
-    
-    /**
-     * Delete file from storage and database
-     * Logs warning if deletion fails but doesn't stop process
-     * 
-     * @param int $fileId File ID to delete
-     * @return void
-     */
-    private function deleteOldFile($fileId)
-    {   
+
+    public function handleDeleteBio(UserProfileTranslation $translation): void
+    {
         try {
-            if (empty($fileId)) {
-                return; // Jika tidak ada fileId, langsung return
-            }
+            DB::transaction(function () use ($translation) {
+                $translation->delete();
+            });
 
-            $oldFile = $this->fileRepository->findById($fileId);
-            
-            if (!$oldFile) {
-                Log::warning("File with ID {$fileId} not found in database");
-                return;
-            }
-
-            // Delete from storage
-            if ($oldFile->directory && Storage::disk('public')->exists($oldFile->directory)) {
-                Storage::disk('public')->delete($oldFile->directory);
-            }
-
-            // Delete from database
-            $this->fileRepository->delete($fileId);
-
-            Log::info("Old file (ID: {$fileId}) successfully deleted.");
+            Log::info('Bio translation deleted.', [
+                'user_profile_translation_id' => $translation->id,
+                'lang'                      => $translation->lang,
+            ]);
 
         } catch (\Throwable $th) {
-            Log::error('Old file failed to delete: ' . $th->getMessage());
-            throw new Exception('Old file failed to delete: ' . $th->getMessage());
+            Log::error('Failed to delete bio: ' . $th->getMessage(), [
+                'user_profile_translation_id' => $translation->id,
+            ]);
+
+            throw new Exception('Failed to delete bio: ' . $th->getMessage());
         }
     }
 }
