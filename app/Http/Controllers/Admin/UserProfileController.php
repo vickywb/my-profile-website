@@ -12,11 +12,7 @@ use App\Models\UserProfileTranslation;
 
 class UserProfileController extends Controller
 {
-    private $userProfileService;
-
-    public function __construct(UserProfileService $userProfileService) {
-        $this->userProfileService = $userProfileService;
-    }
+    public function __construct(private UserProfileService $userProfileService) {}
 
     public function index()
     {
@@ -46,7 +42,7 @@ class UserProfileController extends Controller
         $data = $request->validate();
         $image = $request->file('image');
 
-        $userProfile = $this->userProfileService->handleUpdateProfile($data, $image, $userProfile);
+        $this->userProfileService->handleUpdateProfile($data, $image, $userProfile);
 
         return to_route('admin.user-profile.index')->with([
             'success' => 'User Profile successfully updated.'
@@ -68,7 +64,7 @@ class UserProfileController extends Controller
 
         $image = $request->file('image');
 
-        $userProfile = $this->userProfileService->uploadImageOnly($image, $userProfile);
+        $this->userProfileService->uploadImageOnly($image, $userProfile);
 
         return to_route('admin.user-profile.index')->with([
             'success' => 'Image successfully updated.'
@@ -84,40 +80,58 @@ class UserProfileController extends Controller
         ]);
     }
 
-    public function editBio(UserProfile $userProfile, UserProfileTranslation $translation)
-    {
-        $translation = UserProfileTranslation::where('user_profile_id', $userProfile->id)
-            ->where('lang', $translation->lang)
-            ->firstOrFail();
-
-        $languages = Lang::cases();
-
-        return view('backend.user-profiles.edit-bio-form', [
-            'userProfile' => $userProfile,
-            'languages' => $languages,
-            'translation' => $translation
-        ]);
-    }
-
-    public function storeBio(Request $request, UserProfile $userProfile, UserProfileTranslation $translation)
+    public function storeBio(Request $request, UserProfile $userProfile)
     {
         $request->validate([
             'bio' => 'required|string',
             'full_bio' => 'nullable|string',
             'lang' => 'required|string'
-        ]);
+        ]); 
 
-        $data = $request->validated();
+        $data = $request->only(['bio', 'full_bio', 'lang']);
 
-        $translation = $this->userProfileService->handleCreateOrUpdateBio($data, $userProfile);
+        $this->userProfileService->handleCreateBio($data, $userProfile);
 
         return to_route('admin.user-profile.index')->with([
             'success' => 'New Bio successfully created.'
         ]);
     }
 
-    public function deleteBio()
+    public function editBio(UserProfile $userProfile, UserProfileTranslation $translation)
     {
-        
+        $languages = Lang::cases();
+
+        return view('backend.user-profiles.update-bio-form', [
+            'userProfile' => $userProfile,
+            'languages' => $languages,
+            'translation' => $translation
+        ]);
+    }
+
+    public function updateBio(Request $request, UserProfile $userProfile, UserProfileTranslation $translation)
+    {
+        $request->validate([
+            'bio' => 'required|string',
+            'full_bio' => 'nullable|string',
+            'lang' => 'required|string'
+        ]); 
+
+        $data = $request->only(['bio', 'full_bio', 'lang']);
+
+        $this->userProfileService->handleCreateOrUpdateBio($data, $userProfile, $translation->id);
+
+        return to_route('admin.user-profile.index')->with([
+            'userProfile' => $userProfile,
+            'success' => 'New Bio successfully created.'
+        ]);
+    }
+
+    public function deleteBio(UserProfileTranslation $translation)
+    {
+        $this->userProfileService->handleDeleteBio($translation);
+
+        return to_route('admin.user-profile.index')->with([
+            'success' => 'Bio successfully deleted.'
+        ]);
     }
 }
