@@ -3,63 +3,59 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\EducationStoreRequest;
+use App\Http\Requests\EducationUpdateRequest;
+use App\Models\Education;
+use App\Service\EducationService;
 
 class EducationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(
+        private EducationService $educationService
+    ){}
+    
     public function index()
     {
-        //
+        $educations = Education::with('user')->get();
+
+        return view('backend.educations.index', [
+            'educations' => $educations
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('backend.educations.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(EducationStoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        $this->educationService->handleEducation($data);
+
+        return to_route('admin.education.index')->with('success', 'Education created successfully');
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Education $education)
     {
-        //
+        return view('backend.educations.edit', [
+            'education' => $education
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(EducationUpdateRequest $request, Education $education)
     {
-        //
+        $data = $request->validated();
+        $this->educationService->handleUpdateEducation($education, $data);
+
+        return to_route('admin.education.index')->with('success', 'Education updated successfully');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Education $education)
     {
-        //
-    }
+        $this->educationService->handleDeleteEducation($education);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return to_route('admin.education.index')->with('success', 'Education deleted successfully');
     }
 }
