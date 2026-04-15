@@ -17,107 +17,89 @@ class ExperienceService
         $this->experienceRepository = $experienceRepository;
     }
 
-    public function handleExperience(array $data, $request)
+    public function handleExperience(array $data): Experience
     {
         try {
-            DB::beginTransaction();
-            
-            $experienceData = [
-                'user_id' => auth()->id(),
-                'company_name' => $data['company_name'],
-                'position' =>  $data['position'],
-                'location' => $data['location'],
-                'start_date' => $data['start_date'],
-                'end_date' => $data['end_date']
-            ];
+            $experience = DB::transaction(function () use ($data) {
+                return $this->experienceRepository->save(new Experience($data));
 
-            $experience = new Experience($experienceData);
-            $experience = $this->experienceRepository->save($experience);
+                Log::info('Experience successfully created.', [
+                    'experience_id' => $experience->id,
+                    'user_id'       => auth()->id(),
+                ]);
 
-            DB::commit();
+                return $experience;
+            });
 
-            Log::info('New Experience successfully created.');
-            return $experience;
         } catch (\Throwable $th) {
-            DB::rollBack();
 
             Log::error('Faild to create data:' . $th->getMessage());
             throw new Exception('Failed to create data:' . $th->getMessage());
         }
     }
 
-    public function handleUpdateExperience(array $data, $request, $experience)
+    public function handleUpdateExperience(array $data, $experience): Experience
     {
         try {
-            DB::beginTransaction();
-            
-            $experienceData = [
-                'user_id' => auth()->id(),
-                'company_name' => $data['company_name'],
-                'position' =>  $data['position'],
-                'location' => $data['location'],
-                'start_date' => $data['start_date'],
-                'end_date' => $data['end_date']
-            ];
+            $experience = DB::transaction(function () use ($data, $experience) {
 
-            $experience = $experience->fill($experienceData);
-            $experience = $this->experienceRepository->save($experience);
+                $experience->fill($data);
 
-            DB::commit();
+                return $this->experienceRepository->save($experience);
+            });
 
-            Log::info('Experience successfully updated.');
+            Log::info('Experience successfully updated.', [
+                'experience_id' => $experience->id,
+                'user_id'       => auth()->id(),
+            ]);
+
             return $experience;
+
         } catch (\Throwable $th) {
-            DB::rollBack();
 
             Log::error('Faild to update data:' . $th->getMessage());
             throw new Exception('Failed to update data:' . $th->getMessage());
         }
     }
 
-    public function handleDeleteExperience($experience)
+    public function handleDeleteExperience($experience): void
     {
         try {
-            DB::beginTransaction();
-            
-            $experience->delete();
+           $experience = DB::transaction(function () use ($experience) {
+                $experience->delete();
 
-            DB::commit();
+                Log::info('Experience successfully delete.');
+                return $experience;
+            });
 
-            Log::info('Experience successfully delete.');
-            return $experience;
         } catch (\Throwable $th) {
-            DB::rollBack();
 
             Log::error('Faild to delete data:' . $th->getMessage());
             throw new Exception('Failed to delete data:' . $th->getMessage());
         }
     }
 
-    public function handleUpdateOrCreateJobDescription(array $data, $request, $experience)
+    public function handleUpdateOrCreateJobDescription(array $data, $experience): ExperienceTranslation
     {
         try {
-            DB::beginTransaction();
-            
-            // updateOrCreate - if lang exists = update, if not exists = create
-            $storeJobDescription = ExperienceTranslation::updateOrCreate(
-                [
-                    'experience_id' => $experience->id,
-                    'lang' => $data['lang'],
-                ],
-                [
-                    'job_description' =>  $data['job_description']
-                ]
-            );
+            $experience = DB::transaction(function () use ($data, $experience) {
 
-            DB::commit();
-
-            Log::info('Job Description successfully update.');
-            
-            return $storeJobDescription;
+                return ExperienceTranslation::updateOrCreate(
+                    [
+                        'experience_id' => $experience->id,
+                        'lang' => $data['lang'],
+                    ],
+                    [
+                        'job_description' =>  $data['job_description']
+                    ]
+                );
+                
+                Log::info('Job Description successfully update.');
+                
+                return $experience;
+            });
 
         } catch (\Throwable $th) {
-            DB::rollBack();
 
             Log::error('Faild to update data:' . $th->getMessage());
             throw new Exception('Failed to update data:' . $th->getMessage());
