@@ -6,7 +6,7 @@
       
       @include('components._messages')
       
-      <form action="" method="post">
+      <form action="{{ route('admin.user-profile.store-bio', $userProfile) }}" method="post">
         @csrf
         
         <div class="col-md-12">
@@ -48,7 +48,7 @@
                         <button type="submit" class="btn btn-primary mb-3" onclick="history.back()">Back</button>
                     </div>
                         <div class="d-flex justify-content-between p-0 gap-3">
-                        <button type="submit" class="btn btn-primary mb-3">Update</button>
+                        <button type="submit" class="btn btn-primary mb-3">Create</button>
                     </div>
                 </div>
             </div>
