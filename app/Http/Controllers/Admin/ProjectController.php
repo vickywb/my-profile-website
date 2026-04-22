@@ -6,20 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Models\Project;
+use App\Models\Technology;
 use App\Service\ProjectService;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    private $projectService;
-
-    public function __construct(ProjectService $projectService) {
-        $this->projectService = $projectService;
-    }
+    public function __construct(private ProjectService $projectService) {}
 
     public function index()
     {
-        $projects = Project::with(['user', 'file'])->get();
+        $projects = Project::with(['user', 'file'])->paginate(5);
         return view('backend.projects.index', [
            'projects' => $projects 
         ]);
@@ -27,16 +24,19 @@ class ProjectController extends Controller
 
     public function create()
     {
-        return view('backend.projects.create');
+        $technologies = Technology::all();
+        return view('backend.projects.create', [
+            'technologies' => $technologies
+        ]);
     }
 
-    public function store(ProjectStoreRequest $request, Project $project)
+    public function store(ProjectStoreRequest $request)
     {
-        $data = $request->only([
-            'project_title', 'description', 'project_url', 'github_url', 'image'
-        ]);
+        $data = $request->validated();
 
-        $project = $this->projectService->handleProject($data, $request);
+        $image = $request->file('image') ? $request->file('image') : null;
+
+        $this->projectService->handleCreateProject($data, $image);
 
         return to_route('admin.project.index')->with([
             'success' => 'New Project successfully created.'
@@ -45,18 +45,20 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
+        $technologies = Technology::all();
         return view('backend.projects.edit', [
-            'project' => $project
+            'project' => $project,
+            'technologies' => $technologies
         ]);
     }
 
     public function update(ProjectUpdateRequest $request, Project $project)
     {
-        $data = $request->only([
-            'project_title', 'image', 'description', 'github_url', 'project_url'
-        ]);
+        $data = $request->validated();
 
-        $project = $this->projectService->handleProjectUpdate($data, $request, $project);
+        $image = $request->file('image') ? $request->file('image') : null;
+
+        $this->projectService->handleProjectUpdate($data, $image, $project);
 
         return to_route('admin.project.index')->with([
             'success' => 'Project successfully updated.'
@@ -65,7 +67,7 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        $project = $this->projectService->handleDeleteProject($project);
+        $this->projectService->handleDeleteProject($project);
 
         return to_route('admin.project.index')->with([
             'success' => 'Project successfully deleted.'
