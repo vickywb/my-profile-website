@@ -95,9 +95,7 @@ class CertificateService
 
     public function handleDeleteCertificate(Certification $certificate): void
     {
-        $oldFileId       = $certificate->file_id;
-        $certificationId = $certificate->id;
-
+        $oldFileId = $certificate->file_id;
         try {
             DB::transaction(function () use ($certificate) {
                 $certificate->delete();
@@ -108,13 +106,13 @@ class CertificateService
             }
 
             Log::info('Certification successfully deleted.', [
-                'certification_id' => $certificationId,
+                'certification_id' => $certificate->id,
                 'user_id'          => auth()->id(),
             ]);
 
         } catch (\Throwable $th) {
             Log::error('Failed to delete certification: ' . $th->getMessage(), [
-                'certification_id' => $certificationId,
+                'certification_id' => $certificate->id,
             ]);
 
             throw new Exception('Failed to delete certification: ' . $th->getMessage());
