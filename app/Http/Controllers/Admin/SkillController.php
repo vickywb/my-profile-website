@@ -10,11 +10,7 @@ use App\Http\Controllers\Controller;
 
 class SkillController extends Controller
 {
-    private $skillService;
-
-    public function __construct(SkillService $skillService) {
-        $this->skillService = $skillService;
-    }
+    public function __construct(private SkillService $skillService) {}
 
     public function index()
     {
@@ -32,13 +28,13 @@ class SkillController extends Controller
         ]);
     }
 
-    public function store(Request $request, CategorySkill $categorySkill, Skill $skill)
+    public function store(Request $request, CategorySkill $categorySkill)
     {
         $data = $request->only([
             'category_skill_id', 'skill_name' 
         ]);
 
-        $skill = $this->skillService->handleSkill($data, $request, $categorySkill);
+        $this->skillService->handleSkill($data, $request, $categorySkill);
 
         return to_route('admin.skill.index')->with([
             'success' => 'New Skill successfully created.'
