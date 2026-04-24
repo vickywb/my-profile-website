@@ -1,5 +1,10 @@
 @extends('layouts.admin-app')
 
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+@endpush
+
 @section('title', 'Admin Dashboard - Create Project')
 @section('content')
 
@@ -39,6 +44,30 @@
                     placeholder="Project Url.."
                     value="{{ old('project_url') }}"
                   />
+              </div>
+
+              <div class="mb-3">
+                  <label class="form-label fw-medium" style="font-size: 13px;">Technologies</label>
+              
+                  <select id="techSelect"
+                      name="technologies[]"
+                      multiple
+                      class="form-control"
+                      style="width: 100%;">
+              
+                      @foreach ($technologies as $tech)
+                          <option value="{{ $tech->id }}"
+                              {{ isset($project) && $project->technologies->contains($tech->id) ? 'selected' : '' }}
+                              {{ in_array($tech->id, old('technologies', [])) ? 'selected' : '' }}>
+                              {{ $tech->name }}
+                          </option>
+                      @endforeach
+              
+                  </select>
+              
+                  @error('technologies')
+                      <div class="text-danger mt-1" style="font-size: 12px;">{{ $message }}</div>
+                  @enderror
               </div>
 
               <div class="mb-3">
@@ -86,4 +115,22 @@
                 console.error( error );
             } );
     </script>
+@endpush
+
+@push('scripts')
+{{-- Skip jika jQuery sudah ada di layout --}}
+@if (!defined('JQUERY_LOADED'))
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+@php define('JQUERY_LOADED', true) @endphp
+@endif
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#techSelect').select2({
+            placeholder: 'Search technology...',
+            allowClear: true,
+            width: '100%',
+        });
+    });
+</script>
 @endpush

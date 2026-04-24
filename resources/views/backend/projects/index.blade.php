@@ -64,10 +64,12 @@
                         </div>
                       </td>
                     </tr>
-
                     @endforeach
                   </tbody>
                 </table>
+                <div class="d-flex justify-content-center mt-2 mb-2">
+                    {{ $projects->links() }}
+                </div>
               </div>
             </div>
         </div>
