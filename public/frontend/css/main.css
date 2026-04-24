@@ -463,7 +463,7 @@ body {
 .project-image {
     width: 100%;
     height: 300px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0832ef 0%, #fffeff 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -567,6 +567,56 @@ body {
 
 .project-link.source {
     background: transparent;
+}
+
+.project-hidden {
+    display: none;
+}
+ 
+.project-card.reveal {
+    animation: fadeInUp 0.4s ease forwards;
+}
+ 
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn-load-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    border: 1.5px solid #007bff;
+    border-radius: 8px;
+    background: transparent;
+    color: #007bff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-load-more:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-load-more #projectCount {
+    font-size: 12px;
+    opacity: 0.75;
 }
 
 /* Special styling for code images */
@@ -709,6 +759,81 @@ body {
     }
 
     /* Pastikan dropdown di mobile tidak menggunakan hover */
+    .dropdown:hover > .dropdown-menu {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+ 
+    .hero h1 {
+        font-size: 2rem;
+    }
+ 
+    .nav-links {
+        gap: 0.5rem;
+    }
+ 
+    .about-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 1.5rem;
+    }
+ 
+    .btn {
+        padding: 8px 20px;
+    }
+ 
+    .cta-buttons {
+        display: grid;
+        gap: 1rem;
+        padding-bottom: 1.5rem;
+    }
+ 
+    .timeline::before {
+        left: 20px;
+    }
+ 
+    .timeline-item {
+        padding-left: 50px;
+        text-align: left;
+    }
+ 
+    .language-switcher {
+        margin-left: auto;
+        margin-right: 10px;
+    }
+ 
+    .nav-links:not(.mobile) {
+        display: none;
+    }
+ 
+    .mobile-toggle {
+        display: flex;
+    }
+ 
+    .nav-content .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fffdfddb;
+    }
+ 
+    .nav-content .nav-links.active {
+        display: flex;
+    }
+ 
+    .dropdown-menu {
+        margin-top: 0px;
+        background-color: #fffdfddb;
+    }
+ 
+    .dropdown-menu.show {
+        display: block;
+    }
+ 
     .dropdown:hover > .dropdown-menu {
         display: none;
     }
