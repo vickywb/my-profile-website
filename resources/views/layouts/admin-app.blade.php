@@ -45,6 +45,8 @@
       <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
       <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
       <script src="{{ asset('backend/js/config.js') }}"></script>
+
+      @stack('styles')
    </head>
    <body>
 
@@ -96,6 +98,7 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 
     @stack('ckeditor')
+    @stack('scripts')
     {{-- @stack('script') --}}
    </body>
 </html>
