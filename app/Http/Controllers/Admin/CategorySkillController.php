@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Models\CategorySkill;
-use App\Http\Controllers\Controller;
 
-class CategorySkillController extends Controller
+class CategorySkillController
 {
     public function index()
     {

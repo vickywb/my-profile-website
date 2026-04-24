@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\Lang;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ExperienceStoreRequest;
 use App\Http\Requests\ExperienceUpdateRequest;
 use App\Models\Experience;
@@ -11,7 +10,7 @@ use App\Models\ExperienceTranslation;
 use App\Service\ExperienceService;
 use Illuminate\Http\Request;
 
-class ExperienceController extends Controller
+class ExperienceController
 {
     private $experienceService;
 

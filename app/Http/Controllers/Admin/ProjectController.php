@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Models\Project;
@@ -10,7 +9,7 @@ use App\Models\Technology;
 use App\Service\ProjectService;
 use Illuminate\Http\Request;
 
-class ProjectController extends Controller
+class ProjectController
 {
     public function __construct(private ProjectService $projectService) {}
 

@@ -6,11 +6,10 @@ use App\Enums\Lang;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use App\Service\UserProfileService;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\UserProfileUpdateRequest;
 use App\Models\UserProfileTranslation;
 
-class UserProfileController extends Controller
+class UserProfileController
 {
     public function __construct(private UserProfileService $userProfileService) {}
 

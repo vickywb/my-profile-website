@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\EducationStoreRequest;
 use App\Http\Requests\EducationUpdateRequest;
 use App\Models\Education;
 use App\Service\EducationService;
 
-class EducationController extends Controller
+class EducationController
 {
     public function __construct(
         private EducationService $educationService

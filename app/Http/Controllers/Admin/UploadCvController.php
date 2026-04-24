@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Lang;
 use App\Models\UserCvFile;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CvStoreRequest;
 use App\Service\CvsService;
 
-class UploadCvController extends Controller
+class UploadCvController
 {
     public function __construct(private CvsService $cvsService) {}
 

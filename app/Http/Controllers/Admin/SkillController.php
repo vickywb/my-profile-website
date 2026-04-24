@@ -6,9 +6,8 @@ use App\Models\Skill;
 use Illuminate\Http\Request;
 use App\Models\CategorySkill;
 use App\Service\SkillService;
-use App\Http\Controllers\Controller;
 
-class SkillController extends Controller
+class SkillController
 {
     public function __construct(private SkillService $skillService) {}
 

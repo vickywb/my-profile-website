@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CertificateStoreRequest;
 use App\Http\Requests\CertificateUpdateRequest;
 use App\Models\Certification;
 use App\Service\CertificateService;
 
-class CertificationController extends Controller
+class CertificationController
 {
     private $certificateService;
 

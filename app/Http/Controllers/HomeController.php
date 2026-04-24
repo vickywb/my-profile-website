@@ -3,19 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Skill;
-use App\Models\Project;
-use App\Models\Experience;
-use App\Models\SocialLink;
-use Illuminate\Http\Request;
-use App\Models\CategorySkill;
-use App\Models\Certification;
 use App\Models\UserCvFile;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
-class HomeController extends Controller
+class HomeController
 {
     public function index()
     {
@@ -49,7 +42,6 @@ class HomeController extends Controller
 
     public function downloadCV()
     {
-        // Download CV for frontend (without parameter ID)
         $lang = app::getLocale();
         $userUploadCv = UserCvFile::where('user_id', 1)
             ->where('lang', $lang)
@@ -67,8 +59,8 @@ class HomeController extends Controller
         }
 
         $userName = str_replace(' ', '_', $userUploadCv->user->name);
-        // Download dengan nama yang professional
-        $downloadName = 'CV_' . $userName . '_' . date('Y') . '.' .
+
+        $downloadName = 'CV_' . $userName . '_' . date('dmYHis') . '.' .
                        pathinfo($file->name, PATHINFO_EXTENSION);
         
         return response()->download($filePath, $downloadName);
@@ -76,14 +68,12 @@ class HomeController extends Controller
     
     public function switchLang($lang)
     {
-        // Debug before
-            Log::info('BEFORE - Session: ' . Session::get('locale') . ', App: ' . App::getLocale());
-        
+        Log::info('BEFORE - Session: ' . Session::get('locale') . ', App: ' . App::getLocale());
+    
         if (in_array($lang, ['en', 'id'])) {
             Session::put('locale', $lang);
-            App::setLocale($lang); // Set immediately
+            App::setLocale($lang);
             
-            // Debug after
             Log::info('AFTER - Session: ' . Session::get('locale') . ', App: ' . $lang);
         }
         
