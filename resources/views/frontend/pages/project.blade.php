@@ -7,7 +7,7 @@
             @foreach ($user->projects as $index => $project)
                 <div class="project-card {{ $index >= 3 ? 'project-hidden' : '' }}">
                     <div class="project-image">
-                        <img src="{{ asset($project->file->file_url ?? 'https://placehold.co/600x400') }}"
+                        <img src="{{ asset($project->file->file_url ?? 'https://placehold.co/600x400') }} loading="lazy"
                             alt="{{ Str::slug($project->project_title ?? 'no-title') }}">
                     </div>
                     <div class="project-content">

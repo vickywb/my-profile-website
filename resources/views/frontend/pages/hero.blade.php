@@ -4,7 +4,7 @@
     
         <div class="about-grid">
             <div class="about-image">
-                <img src="{{ asset($user->userProfile->profileImage->file_url ?? 'no-photo-available') }}" alt="profile-image-{{ Str::slug($user->name ?? 'no-name') ?? 'no-image' }}">
+                <img src="{{ asset($user->userProfile->profileImage->file_url ?? 'no-photo-available') }}" alt="profile-image-{{ Str::slug($user->name ?? 'no-name') ?? 'no-image' }} loading="lazy">
             </div>
         <div>
 
