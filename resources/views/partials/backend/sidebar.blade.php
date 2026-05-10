@@ -210,14 +210,14 @@
       <!-- Account -->
       <li class="menu-header small text-uppercase"><span class="menu-header-text">Account</span></li>
       <li class="menu-item">
-        <a
-          href="{{ route('logout') }}"
-          target="_blank"
-          class="menu-link"
-        >
+        <form action="{{ route('logout') }}" method="POST">
+          @csrf
+
+          <button class="menu-link border-0 bg-white" type="submit">
           <i class="menu-icon tf-icons bx bx-log-out"></i>
           <div data-i18n="Logout">Logout</div>
-        </a>
+          </button>
+        </form>
       </li>
     </ul>
   </aside>
