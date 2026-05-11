@@ -33,8 +33,15 @@
             </div>
 
             <div class="row">
-              <div class="d-flex justify-content-end px-5 py-">
-                  <button type="submit" class="btn btn-primary mb-3">Save</button>
+              <div class="d-flex justify-content-end px-5">
+                  <div class="cta-buttons">
+                    <div class="d-flex justify-content-between p-0 gap-3">
+                        <button type="submit" class="btn btn-primary mb-3" onclick="history.back()">Back</button>
+                    </div>
+                        <div class="d-flex justify-content-between p-0 gap-3">
+                        <button type="submit" class="btn btn-primary mb-3">Save</button>
+                  </div>
+                </div>
               </div>
             </div>
 

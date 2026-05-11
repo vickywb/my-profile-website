@@ -14,7 +14,7 @@
         @method('PATCH')
 
         <div class="col-md-12">
-          <div class="card mb-4">
+          <div class="card">
             <h5 class="card-header">Form Edit User Profile</h5>
 
             <div class="card-body">
@@ -50,10 +50,14 @@
 
             </div>
 
-            <div class="row">
-              <div class="d-flex justify-content-end px-5 py-">
+            <div class="d-flex justify-content-end px-2">
+                <div class="cta-buttons">
+                  <div class="d-flex justify-content-between p-0">
+                    <button type="submit" class="btn btn-primary mb-3" onclick="history.back()">Back</button>
+                  </div>
+                    <div class="d-flex justify-content-between p-0  ">
                   <button type="submit" class="btn btn-primary mb-3">Save</button>
-              </div>
+                </div>
             </div>
 
           </div>
