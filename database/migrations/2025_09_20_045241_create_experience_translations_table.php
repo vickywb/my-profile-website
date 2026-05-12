@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('experience_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->enum('lang', ['en', 'id'])->default('en');
             $table->longText('job_description');
+            $table->unique(['experience_id', 'lang']);
             $table->timestamps();
         });
     }
