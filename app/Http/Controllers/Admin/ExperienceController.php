@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Lang;
 use App\Http\Requests\ExperienceStoreRequest;
+use App\Http\Requests\ExperienceTranslationStore;
 use App\Http\Requests\ExperienceUpdateRequest;
 use App\Models\Experience;
 use App\Models\ExperienceTranslation;
@@ -12,11 +13,7 @@ use Illuminate\Http\Request;
 
 class ExperienceController
 {
-    private $experienceService;
-
-    public function __construct(ExperienceService $experienceService) {
-        $this->experienceService = $experienceService;
-    }
+    public function __construct(private ExperienceService $experienceService) {}
 
     public function index()
     {
@@ -34,9 +31,7 @@ class ExperienceController
 
     public function store(ExperienceStoreRequest $request)
     {
-        $data = $request->validated();
-
-        $this->experienceService->handleExperience($data, $request);
+        $this->experienceService->handleCreateExperience($request->validated());
 
         return to_route('admin.experience.index')->with([
             'success' => 'New Experience successfully created.'
@@ -70,7 +65,7 @@ class ExperienceController
 
     public function destroy(Experience $experience)
     {
-        $experience = $this->experienceService->handleDeleteExperience($experience);
+        $this->experienceService->handleDeleteExperience($experience);
 
         return to_route('admin.experience.index')->with([
             'success' => 'Experience successfully deleted.'
@@ -89,10 +84,10 @@ class ExperienceController
 
     public function editTranslation(Experience $experience, ExperienceTranslation $translation)
     {
-        $translation = ExperienceTranslation::where('experience_id', $experience->id)
-                                        ->where('lang', $translation->lang)
-                                        ->firstOrFail();
-        
+        $translation = ExperienceTranslation::where('id', $translation->id)
+            ->where('experience_id', $experience->id)
+            ->firstOrFail();
+
         $languages = Lang::cases();
         return view('backend.experiences.edit-description', [
             'experience' => $experience,
@@ -101,18 +96,18 @@ class ExperienceController
         ]);
     }
 
-    public function storeTranslation(Request $request, Experience $experience)
+    public function updateTranslation(ExperienceTranslationStore $request, Experience $experience)
     {
-        $request->validate([
-            'lang' => 'required|string',
-            'job_description' => 'required|string'
-        ]);
+        $this->experienceService->handleUpdateOrCreateJobDescription($request->validated(), $experience);
 
-        $data = $request->only([
-            'lang', 'job_description'
+        return to_route('admin.experience.show', $experience)->with([
+            'success' => 'Job Description Experience successfully updated.'
         ]);
+    }
 
-        $this->experienceService->handleUpdateOrCreateJobDescription($data, $experience);
+    public function storeTranslation(ExperienceTranslationStore $request, Experience $experience)
+    {
+        $this->experienceService->handleUpdateOrCreateJobDescription($request->validated(), $experience);
 
         return to_route('admin.experience.show', $experience)->with([
             'success' => 'Job Description Experience successfully updated.'
