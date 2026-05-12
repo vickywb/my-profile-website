@@ -99,6 +99,8 @@ Route::prefix('admin')
                     ->name('add-translation');
                 Route::post('/{experience}/translations', 'storeTranslation')
                     ->name('store-translation');
+                Route::patch('/{experience}/translations/{translation}', 'updateTranslation')
+                    ->name('update-translation');
                 Route::get('/{experience}/edit-translations/{translation}', 'editTranslation')
                     ->name('edit-translation');
             }
