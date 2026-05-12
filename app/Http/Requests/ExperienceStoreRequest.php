@@ -27,7 +27,6 @@ class ExperienceStoreRequest extends FormRequest
             'location' => 'required|string',
             'start_date' => 'required',
             'end_date' => 'nullable',
-            'job_description' => 'required|string' 
         ];
     }
 }
