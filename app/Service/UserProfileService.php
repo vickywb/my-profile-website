@@ -33,8 +33,8 @@ class UserProfileService
 
                 $userProfile->fill([
                     'phone_number' => $data['phone_number'] ?? null,
-                    'address'      => $data['address'] ?? null,
-                    'file_id'      => $newFileId,
+                    'address' => $data['address'] ?? null,
+                    'file_id' => $newFileId,
                 ]);
 
                 $this->userProfileRepository->save($userProfile);
@@ -48,8 +48,8 @@ class UserProfileService
 
             Log::info('User profile updated.', [
                 'user_profile_id' => $userProfile->id,
-                'old_file_id'     => $oldFileId,
-                'new_file_id'     => $newFile?->id,
+                'old_file_id' => $oldFileId,
+                'new_file_id' => $newFile?->id,
             ]);
 
             return $userProfile->fresh();
@@ -80,8 +80,8 @@ class UserProfileService
 
             Log::info('Profile image updated.', [
                 'user_profile_id' => $userProfile->id,
-                'old_file_id'     => $oldFileId,
-                'new_file_id'     => $newFile->id,
+                'old_file_id' => $oldFileId,
+                'new_file_id' => $newFile->id,
             ]);
 
             return $userProfile->fresh();
@@ -107,7 +107,7 @@ class UserProfileService
             
             Log::info('Bio translation created.', [
                 'user_profile_id' => $translation->user_profile_id,
-                'lang'            => $translation->lang,
+                'lang' => $translation->lang,
             ]);
 
             return $translation;
@@ -129,10 +129,10 @@ class UserProfileService
                     [
                         'id' => $translationId,
                         'user_profile_id' => $userProfile->id,
-                        'lang'            => $data['lang'],
+                        'lang' => $data['lang'],
                     ],
                     [
-                        'bio'      => $data['bio'],
+                        'bio' => $data['bio'],
                         'full_bio' => $data['full_bio'],
                     ]
                 );
@@ -140,7 +140,7 @@ class UserProfileService
 
             Log::info('Bio translation updated.', [
                 'user_profile_id' => $userProfile->id,
-                'lang'            => $data['lang'],
+                'lang' => $data['lang'],
             ]);
 
             return $translation;
@@ -163,7 +163,7 @@ class UserProfileService
 
             Log::info('Bio translation deleted.', [
                 'user_profile_translation_id' => $translation->id,
-                'lang'                      => $translation->lang,
+                'lang' => $translation->lang,
             ]);
 
         } catch (\Throwable $th) {
