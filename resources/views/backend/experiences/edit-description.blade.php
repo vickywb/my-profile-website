@@ -6,8 +6,9 @@
       
       @include('components._messages')
       
-      <form action="{{ route('admin.experience.store-translation', [$experience, $translation]) }}" method="post">
+      <form action="{{ route('admin.experience.update-translation', [$experience, $translation]) }}" method="post">
         @csrf
+        @method('patch')
         
         <div class="col-md-12">
           <div class="card mb-4">

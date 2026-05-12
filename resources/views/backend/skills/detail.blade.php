@@ -26,7 +26,10 @@
                                     <div class="job-description me-5">
                                         Skill Name :
                                         @foreach ($categorySkill->skills as $item)
-                                            <span class="text-gray-700 fs-7 fw-bolder btn btn-sm btn-info">{{ $item->skill_name }}</span>
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <span class="text-gray-700 fs-7 fw-bolder btn btn-sm btn-info">{{ $item->skill_name }}</span>
+                                                <a href="{{ route('admin.skill.edit', $item) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
