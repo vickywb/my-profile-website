@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\SkillStoreRequest;
+use App\Http\Requests\SkillUpdateRequest;
 use App\Models\Skill;
 use Illuminate\Http\Request;
 use App\Models\CategorySkill;
@@ -19,24 +21,38 @@ class SkillController
         ]);
     }
 
-    public function create(CategorySkill $categorySkill, Skill $skill)
+    public function create(CategorySkill $categorySkill)
     {
         return view('backend.skills.create', [
-            'categorySkill' => $categorySkill,
-            'skill' => $skill
+            'categorySkill' => $categorySkill
         ]);
     }
 
-    public function store(Request $request, CategorySkill $categorySkill)
+    public function store(SkillStoreRequest $request, CategorySkill $categorySkill)
     {
-        $data = $request->only([
-            'category_skill_id', 'skill_name' 
-        ]);
-
-        $this->skillService->handleSkill($data, $request, $categorySkill);
+        $this->skillService->handleCreateSkill($request->validated(), $categorySkill);
 
         return to_route('admin.skill.index')->with([
             'success' => 'New Skill successfully created.'
+        ]);
+    }
+
+    public function edit(Skill $skill)
+    {
+        $categories = CategorySkill::all();
+
+        return view('backend.skills.edit', [
+            'skill' => $skill,
+            'categories' => $categories,
+        ]);
+    }
+
+    public function update(SkillUpdateRequest $request, Skill $skill)
+    {
+        $this->skillService->handleUpdateSkill($request->validated(), $skill);
+
+        return to_route('admin.skill.show', $skill->categorySkill)->with([
+            'success' => 'Skill successfully updated.'
         ]);
     }
 
@@ -49,7 +65,7 @@ class SkillController
 
     public function destroy(CategorySkill $categorySkill)
     {
-        $categorySkill = $this->skillService->handleDeleteSkill($categorySkill);
+        $this->skillService->handleDeleteSkill($categorySkill);
 
         return to_route('admin.skill.index')->with([
             'success' => 'Category Skill successfully deleted.'
