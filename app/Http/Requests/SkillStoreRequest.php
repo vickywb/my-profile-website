@@ -22,7 +22,7 @@ class SkillStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'skill_name' => 'required|string'
+            'skill_name' => 'required|string',
         ];
     }
 }

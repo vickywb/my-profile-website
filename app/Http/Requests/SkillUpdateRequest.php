@@ -11,7 +11,7 @@ class SkillUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class SkillUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'skill_name' => 'required|string',
+            'category_skill_id' => 'nullable|exists:category_skills,id'
         ];
     }
 }
