@@ -9,11 +9,7 @@ use App\Service\CertificateService;
 
 class CertificationController
 {
-    private $certificateService;
-
-    public function __construct(CertificateService $certificateService) {
-        $this->certificateService = $certificateService;
-    }
+    public function __construct(private CertificateService $certificateService) {}
 
     public function index()
     {
@@ -65,7 +61,7 @@ class CertificationController
 
     public function destroy(Certification $certificate)
     {
-        $certificate = $this->certificateService->handleDeleteCertificate($certificate);
+        $this->certificateService->handleDeleteCertificate($certificate);
 
         return to_route('admin.certificate.index')->with([
             'success' => 'Certificate successfully deleted.'
