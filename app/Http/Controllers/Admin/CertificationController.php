@@ -27,11 +27,7 @@ class CertificationController
 
     public function store(CertificateStoreRequest $request)
     {
-        $data = $request->validated();
-
-        $image = $request->hasFile('image') ? $request->file('image') : null;
-
-        $this->certificateService->handleCreateCertificate($data, $image);
+        $this->certificateService->handleCreateCertificate($request->validated(), $request->file('image'));
 
         return to_route('admin.certificate.index')->with([
             'success' => 'New Certification successfully created.'
@@ -47,11 +43,7 @@ class CertificationController
 
     public function update(CertificateUpdateRequest $request, Certification $certificate)
     {
-        $data = $request->validated();
-
-        $image = $request->hasFile('image') ? $request->file('image') : null;
-
-        $this->certificateService->handleUpdateCertificate($data, $image, $certificate);
+        $this->certificateService->handleUpdateCertificate($request->validated(), $request->file('image'), $certificate);
 
         return to_route('admin.certificate.index')->with([
             'success' => 'Certificate successfully updated.'

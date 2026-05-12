@@ -31,11 +31,7 @@ class ProjectController
 
     public function store(ProjectStoreRequest $request)
     {
-        $data = $request->validated();
-
-        $image = $request->file('image') ? $request->file('image') : null;
-
-        $this->projectService->handleCreateProject($data, $image);
+        $this->projectService->handleCreateProject($request->validated(), $request->file('image'));
 
         return to_route('admin.project.index')->with([
             'success' => 'New Project successfully created.'
@@ -53,11 +49,7 @@ class ProjectController
 
     public function update(ProjectUpdateRequest $request, Project $project)
     {
-        $data = $request->validated();
-
-        $image = $request->file('image') ? $request->file('image') : null;
-
-        $this->projectService->handleProjectUpdate($data, $image, $project);
+        $this->projectService->handleProjectUpdate($request->validated(), $request->file('image'), $project);
 
         return to_route('admin.project.index')->with([
             'success' => 'Project successfully updated.'

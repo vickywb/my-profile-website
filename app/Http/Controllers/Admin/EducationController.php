@@ -29,8 +29,7 @@ class EducationController
 
     public function store(EducationStoreRequest $request)
     {
-        $data = $request->validated();
-        $this->educationService->handleEducation($data);
+        $this->educationService->handleEducation($request->validated());
 
         return to_route('admin.education.index')->with('success', 'Education created successfully');
 
@@ -45,8 +44,7 @@ class EducationController
 
     public function update(EducationUpdateRequest $request, Education $education)
     {
-        $data = $request->validated();
-        $this->educationService->handleUpdateEducation($education, $data);
+        $this->educationService->handleUpdateEducation($education, $request->validated());
 
         return to_route('admin.education.index')->with('success', 'Education updated successfully');
     }
