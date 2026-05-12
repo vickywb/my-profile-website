@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController
 {
@@ -31,9 +32,10 @@ class AuthController
         ]);
     }
 
-    public function logout(): RedirectResponse
+    public function logout()
     {
-        auth()->logout();
+        // auth()->logout();
+        Auth::logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
         return redirect()->route('login');
